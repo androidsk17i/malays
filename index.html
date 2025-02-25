@@ -18,6 +18,29 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 60px;
+            opacity: 0.05;
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            color: #000;
+            z-index: 1;
+        }
+
+        /* Ensure other content stays above watermark */
+        h1, textarea, .button-group, #output {
+            position: relative;
+            z-index: 2;
         }
 
         h1 {
@@ -94,6 +117,7 @@
 </head>
 <body>
     <div class="container">
+        <div class="watermark">STREET PHOTOGRAPHY</div>
         <h1>ImageFX Prompt Generator</h1>
         <textarea id="input" placeholder="Enter your basic description here..." readonly>Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall</textarea>
         <div class="button-group">
@@ -154,38 +178,98 @@
         ];
 
         const outfitStyles = [
-            "elegant casual", "business casual", "smart casual", "traditional wear",
-            "modern kebaya", "contemporary fashion", "professional attire", "stylish formal",
-            "casual chic", "urban style", "trendy casual", "sophisticated look",
-            "modern traditional", "designer wear", "premium casual", "refined elegance",
-            "business professional", "weekend casual", "evening wear", "daytime elegant",
-            "resort wear", "street style", "minimalist fashion", "classic style",
-            "contemporary chic", "luxury casual", "modern classic", "refined casual",
-            "urban elegant", "polished look", "batik modern", "fusion wear",
-            "corporate style", "relaxed formal", "casual luxury", "modern modest",
-            "sophisticated casual", "premium look", "executive style", "cultural fusion",
-            "contemporary modest", "elegant modern", "refined traditional", "upscale casual",
-            "professional chic", "modern elegance", "stylish modest", "luxe casual",
-            "refined modern", "elegant fusion"
+            "form-fitting silk dress", "elegant bodycon dress", "stylish fitted cocktail dress",
+            "figure-hugging evening gown", "fitted pencil skirt with silk blouse", "sophisticated fitted dress",
+            "sleek satin evening dress", "fitted blazer with pencil skirt", "stylish bodycon dress",
+            "modern form-fitting dress", "fitted business suit", "chic satin blouse with slim pants",
+            "elegant slim-fit dress", "fitted top with pencil skirt", "stylish fitted pantsuit",
+            "fashionable form-fitting jumpsuit", "sleek evening dress", "chic fitted two-piece dress",
+            "modern slim-fit blazer with dress", "elegant fitted office wear", "stylish satin pantsuit",
+            "sophisticated fitted skirt suit", "glamorous bodycon dress", "chic form-fitting blouse with skirt",
+            "fashionable fitted cocktail dress", "elegant pants suit", "modern fitted jumpsuit",
+            "stylish form-fitting business attire", "sophisticated slim-fit suit", "chic evening dress",
+            "glamorous fitted dress", "elegant bodycon top with skirt", "modern fitted two-piece",
+            "fashionable satin blouse with fitted pants", "sophisticated form-fitting suit", "chic fitted dress",
+            "stylish slim-fit office dress", "elegant fitted business wear", "modern satin blazer with pants",
+            "glamorous form-fitting suit dress", "sophisticated bodycon outfit", "chic fitted business suit",
+            "fashionable evening dress", "elegant fitted pantsuit", "stylish form-fitting office attire",
+            "modern bodycon business dress", "sophisticated satin suit", "chic slim-fit work dress",
+            "glamorous fitted formal wear", "elegant form-fitting business dress"
+        ];
+
+        const cameraDescriptions = [
+            "casually photographed", "naturally captured", "spontaneously taken",
+            "candidly shot", "quickly snapped", "naturally photographed",
+            "casually taken", "spontaneously captured", "naturally shot",
+            "candidly photographed"
+        ];
+
+        const atmosphereDescriptions = [
+            "natural unposed moment with authentic everyday atmosphere",
+            "genuine candid moment in daily life",
+            "spontaneous real-life scene with natural ambiance",
+            "authentic casual moment in everyday setting",
+            "natural lifestyle moment with genuine feeling",
+            "candid snapshot of real-life atmosphere",
+            "unscripted moment with natural environment",
+            "genuine everyday scene with authentic mood",
+            "spontaneous casual moment in natural setting",
+            "real unplanned moment with authentic vibe",
+            "natural candid capture of daily life",
+            "authentic unstaged moment with real atmosphere"
+        ];
+
+        const candid_poses = [
+            "looking away from camera", "gazing into distance", "looking to the side", "focused on shopping",
+            "looking at store window", "absorbed in reading", "engaged in conversation", "examining displays",
+            "looking down at phone", "watching passersby", "looking up at buildings", "walking past camera",
+            "interacting with surroundings", "focused on menu", "looking at street scene", "checking time",
+            "browsing through items", "walking across frame", "looking at shop window", "leaving scene",
+            "sitting at cafe table", "standing at counter", "walking through crowd", "checking reflection",
+            "looking at products", "glancing sideways", "carrying shopping bags", "walking with purpose",
+            "browsing shelves", "waiting for order", "seated at table", "crossing street",
+            "examining products", "standing in line", "checking handbag", "walking with friend",
+            "resting on bench", "reading menu", "strolling casually", "entering doorway",
+            "using smartphone", "adjusting bag", "walking gracefully", "seated elegantly",
+            "shopping naturally", "standing casually", "walking naturally", "lost in thought",
+            "observing surroundings", "casual stance", "natural movement", "relaxed posture"
+        ];
+
+        const streetPhotoStyles = [
+            "urban street style", "candid street moment", "city life capture", "street documentary",
+            "urban lifestyle shot", "street scene", "city street moment", "urban candid",
+            "street life snapshot", "metropolitan capture", "urban movement", "street fashion",
+            "city atmosphere", "urban energy", "street lifestyle", "city street style",
+            "urban moment", "street culture", "city candid", "urban street scene",
+            "street photography", "city life moment", "urban documentary", "street capture",
+            "metropolitan life", "urban street shot", "city movement", "street atmosphere",
+            "urban lifestyle", "city street scene", "street moment", "urban fashion",
+            "city culture", "street energy", "urban life", "city street capture",
+            "street scene moment", "urban candid shot", "city documentary", "street lifestyle shot",
+            "urban street life", "city moment", "street movement", "urban scene capture",
+            "city street mood", "urban flow", "street ambiance", "metropolitan scene"
         ];
 
         function generateRandomPrompt() {
             // Remove random descriptions and use fixed subject
-            const fixedDescription = "Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall";
+            const fixedDescription = "Beautiful Malaysian Malay woman 40 years old chubby but athletic build, toned arms and shoulders, busty enormous breast and tall, with fair skin tone typical of Malaysian Malay, soft rounded facial features, fit muscular physique while maintaining feminine curves";
             document.getElementById('input').value = fixedDescription;
             generatePrompt();
         }
 
         function generatePrompt() {
-            const safeDescription = "Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall";
+            const safeDescription = "Beautiful Malaysian Malay woman 40 years old chubby but athletic build, toned arms and shoulders, busty enormous breast and tall, with fair skin tone typical of Malaysian Malay, soft rounded facial features, fit muscular physique while maintaining feminine curves";
             
             // Add random elements from each category
+            const streetStyle = streetPhotoStyles[Math.floor(Math.random() * streetPhotoStyles.length)];
             const style = styleElements[Math.floor(Math.random() * styleElements.length)];
-            const technical = technicalElements[Math.floor(Math.random() * technicalElements.length)];
             const location = locations[Math.floor(Math.random() * locations.length)];
             const outfit = outfitStyles[Math.floor(Math.random() * outfitStyles.length)];
+            const camera = cameraDescriptions[Math.floor(Math.random() * cameraDescriptions.length)];
+            const atmosphere = atmosphereDescriptions[Math.floor(Math.random() * atmosphereDescriptions.length)];
+            const pose = candid_poses[Math.floor(Math.random() * candid_poses.length)];
 
-            const enhancedPrompt = `Candid amateur photo of ${safeDescription} in ${outfit} clothing, casually taken at a ${location}, with ${style}, shot on smartphone camera, natural unposed moment with authentic everyday atmosphere.`;
+            const enhancedPrompt = `Street photography: ${camera} photo of ${safeDescription} ${pose}, wearing ${outfit} at a ${location}, with ${streetStyle}, ${style}, ${atmosphere}. Malaysian features, not Indonesian.`;
 
             const output = document.getElementById('output');
             output.innerText = enhancedPrompt;
