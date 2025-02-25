@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageFX Prompt Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            background-color: #27ae60;
+        }
+
+        .copy-btn:hover {
+            background-color: #219a52;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .random-btn {
+            background-color: #9b59b6;
+        }
+
+        .random-btn:hover {
+            background-color: #8e44ad;
+        }
+
+        .copy-status {
+            margin-top: 10px;
+            text-align: center;
+            color: #27ae60;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ImageFX Prompt Generator</h1>
+        <textarea id="input" placeholder="Enter your basic description here..." readonly>Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall</textarea>
+        <div class="button-group">
+            <button onclick="generatePrompt()">Generate Enhanced Prompt</button>
+            <button onclick="generateRandomPrompt()" class="random-btn">Random Prompt</button>
+        </div>
+        <div id="output"></div>
+        <div id="copy-status" class="copy-status"></div>
+    </div>
+
+    <script>
+        const styleElements = [
+            "natural moment", "casual pose", "candid smile", "spontaneous expression",
+            "everyday scene", "natural setting", "unplanned shot", "genuine moment",
+            "real atmosphere", "casual lighting", "natural shadows", "authentic scene",
+            "unstaged setting", "real-life capture", "natural background", "casual background",
+            "everyday lighting", "natural surroundings", "spontaneous moment", "casual atmosphere",
+            "regular daylight", "natural environment", "unposed moment", "genuine interaction",
+            "real-life scene", "casual setting", "natural pose", "authentic expression",
+            "spontaneous smile", "relaxed mood"
+        ];
+
+        const technicalElements = [
+            "smartphone camera", "iPhone photo", "Android camera", "point and shoot camera",
+            "quick snapshot", "casual photo", "natural lighting", "no flash",
+            "handheld shot", "spontaneous capture", "everyday camera", "mobile phone quality",
+            "quick capture", "candid shot", "unedited look", "natural colors",
+            "authentic capture", "real moment", "unstaged photo", "genuine snapshot",
+            "casual photography", "simple camera", "basic settings", "auto mode",
+            "natural processing", "unfiltered look", "regular camera", "standard lens",
+            "basic phone camera", "regular photo quality"
+        ];
+
+        const locations = [
+            "local cafe", "city street", "shopping mall", "park", "restaurant",
+            "cultural landmark", "modern building lobby", "garden",
+            "boutique hotel", "art gallery", "museum entrance", "historic building",
+            "urban plaza", "rooftop terrace", "beach resort", "luxury hotel",
+            "traditional market", "botanical garden", "riverside walk", "colonial architecture",
+            "modern office", "trendy cafe", "heritage building", "shopping district",
+            "cultural center", "contemporary mall", "scenic viewpoint", "urban park",
+            "waterfront", "city skyline"
+        ];
+
+        const outfitStyles = [
+            "elegant casual", "business casual", "smart casual", "traditional wear",
+            "modern kebaya", "contemporary fashion", "professional attire", "stylish formal",
+            "casual chic", "urban style", "trendy casual", "sophisticated look",
+            "modern traditional", "designer wear", "premium casual", "refined elegance",
+            "business professional", "weekend casual", "evening wear", "daytime elegant",
+            "resort wear", "street style", "minimalist fashion", "classic style",
+            "contemporary chic", "luxury casual", "modern classic", "refined casual",
+            "urban elegant", "polished look"
+        ];
+
+        function generateRandomPrompt() {
+            // Remove random descriptions and use fixed subject
+            const fixedDescription = "Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall";
+            document.getElementById('input').value = fixedDescription;
+            generatePrompt();
+        }
+
+        function generatePrompt() {
+            const safeDescription = "Beautiful Malay Malaysian woman 40 years old chubby, busty big breast and tall";
+            
+            // Add random elements from each category
+            const style = styleElements[Math.floor(Math.random() * styleElements.length)];
+            const technical = technicalElements[Math.floor(Math.random() * technicalElements.length)];
+            const location = locations[Math.floor(Math.random() * locations.length)];
+            const outfit = outfitStyles[Math.floor(Math.random() * outfitStyles.length)];
+
+            const enhancedPrompt = `Candid amateur photo of ${safeDescription} in ${outfit} clothing, casually taken at a ${location}, with ${style}, shot on smartphone camera, natural unposed moment with authentic everyday atmosphere.`;
+
+            const output = document.getElementById('output');
+            output.innerText = enhancedPrompt;
+            
+            // Auto copy to clipboard
+            navigator.clipboard.writeText(enhancedPrompt)
+                .then(() => {
+                    showCopyStatus('Prompt copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    showCopyStatus('Failed to copy to clipboard');
+                });
+        }
+
+        function showCopyStatus(message) {
+            const status = document.getElementById('copy-status');
+            status.textContent = message;
+            status.style.opacity = '1';
+            setTimeout(() => {
+                status.style.opacity = '0';
+            }, 2000);
+        }
+
+        // Generate initial prompt on page load
+        window.onload = generatePrompt;
+    </script>
+</body>
+</html> 
